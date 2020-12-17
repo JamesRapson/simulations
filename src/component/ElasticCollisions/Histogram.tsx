@@ -1,9 +1,8 @@
 import React, { useRef } from "react";
 
 import d3, { max, select, scaleLinear, histogram, axisBottom } from "d3";
-import { Ball, Environment } from "../model/elasticBall";
-import { getMagnitude } from "../vectors";
-import { getEnergy } from "../elasticCollisionsSimulator";
+import { Ball, Environment } from "./elasticBall";
+import { getEnergy } from "./elasticCollisionsSimulator";
 
 let lastUpdate: number;
 

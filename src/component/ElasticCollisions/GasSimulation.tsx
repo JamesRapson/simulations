@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { createRandonVector, scaleVector } from "../../vectors";
+import { Ball, Environment } from "./elasticBall";
 import {
-  getTotalEnergy,
   performCollisions,
+  getTotalEnergy,
   updatePosition,
-} from "../elasticCollisionsSimulator";
-import { Environment, Ball } from "../model/elasticBall";
-import { createRandonVector, scaleVector } from "../vectors";
+  simulationSpeeds,
+  SpeedType,
+} from "./elasticCollisionsSimulator";
+
 import { Histogram } from "./Histogram";
 
 const environment = {
@@ -26,20 +29,58 @@ const createBalls = (environment: Environment, size: number) => {
       balls.push({
         color: "white",
         size,
-        mass: 1,
+        mass: 0.2,
         name: `ball ${row} ${col}`,
         position: {
           x: col * spacing + gap + size,
           y: row * spacing + gap + size,
         },
-        velocity: createRandonVector(100),
+        velocity: createRandonVector(25),
       });
     }
   }
   return balls;
 };
 
-let balls = createBalls(environment, 10);
+// simulate heating/cooling from below
+const doHeatingCooling = (ball: Ball, heatType: HeatType) => {
+  if (heatType === "Heat") {
+    ball.velocity = scaleVector(ball.velocity, 1.3);
+  } else if (heatType === "Cool") {
+    ball.velocity = scaleVector(ball.velocity, 0.8);
+  }
+};
+
+const doContainerBoundaries = (
+  ball: Ball,
+  environment: Environment,
+  heatType: HeatType
+) => {
+  // lower boundary
+  if (ball.position.x - ball.size < 0 && ball.velocity.x < 0) {
+    ball.velocity.x = -1 * ball.velocity.x;
+    doHeatingCooling(ball, heatType);
+  }
+
+  if (ball.position.x + ball.size > environment.width && ball.velocity.x > 0) {
+    ball.velocity.x = -1 * ball.velocity.x;
+  }
+
+  if (ball.position.y + ball.size > environment.height) {
+    ball.velocity.y = -1 * Math.abs(ball.velocity.y);
+  }
+
+  if (ball.position.y - ball.size < 0) {
+    ball.velocity.y = Math.abs(ball.velocity.y);
+  }
+};
+
+const defaulktSize = 10;
+const defaultSpeed = "Normal";
+let timeInterval: number =
+  simulationSpeeds.find((s) => s.speed === defaultSpeed)?.timeInterval || 0;
+
+let balls = createBalls(environment, defaulktSize);
 
 type HeatType = "Heat" | "Cool" | "None";
 
@@ -48,49 +89,15 @@ export const GasSimulation = () => {
   const [heatType, setHeatType] = useState<HeatType>("None");
   const [totalEnergy, setTotalEnergy] = useState<number>();
   const [running, setRunning] = useState(false);
-
-  // simulate heating/cooling from below
-  const doHeatingCooling = (ball: Ball, heatType: HeatType) => {
-    if (heatType === "Heat") {
-      ball.velocity = scaleVector(ball.velocity, 1.3);
-    } else if (heatType === "Cool") {
-      ball.velocity = scaleVector(ball.velocity, 0.8);
-    }
-  };
-
-  const doContainerBoundaries = (
-    ball: Ball,
-    environment: Environment,
-    heatType: HeatType
-  ) => {
-    // lower boundary
-    if (ball.position.x - ball.size < 0 && ball.velocity.x < 0) {
-      ball.velocity.x = -1 * ball.velocity.x;
-      doHeatingCooling(ball, heatType);
-    }
-
-    if (
-      ball.position.x + ball.size > environment.width &&
-      ball.velocity.x > 0
-    ) {
-      ball.velocity.x = -1 * ball.velocity.x;
-    }
-
-    if (ball.position.y + ball.size > environment.height) {
-      ball.velocity.y = -1 * Math.abs(ball.velocity.y);
-    }
-
-    if (ball.position.y - ball.size < 0) {
-      ball.velocity.y = Math.abs(ball.velocity.y);
-    }
-  };
+  const [simulationSpeed, setSimulationSpeed] = useState<SpeedType>(
+    defaultSpeed
+  );
 
   const doSimulationTimeStepCB = useCallback(() => {
-    const interval = 0.02;
     performCollisions(balls);
     balls.forEach((ball) => {
       doContainerBoundaries(ball, environment, heatType);
-      updatePosition(ball, environment, interval);
+      updatePosition(ball, environment, timeInterval);
     });
   }, [heatType]);
 
@@ -128,6 +135,13 @@ export const GasSimulation = () => {
     setCounter((count) => count + 1);
   };
 
+  const onSimulationSpeedChanged = (speedType: SpeedType) => {
+    setSimulationSpeed(speedType);
+    timeInterval =
+      simulationSpeeds.find((s) => s.speed === speedType)?.timeInterval || 0;
+    setCounter((count) => count + 1);
+  };
+
   //console.log("total energy", Math.ceil(energy));
 
   return (
@@ -160,6 +174,20 @@ export const GasSimulation = () => {
             <option value="Cool">Cool</option>
           </select>
         </div>
+        <div className="m-2">
+          <div>Simulation speed</div>
+          <select
+            className="border-2 px-4 py-1"
+            onChange={(e) =>
+              onSimulationSpeedChanged(e.currentTarget.value as SpeedType)
+            }
+            value={simulationSpeed}
+          >
+            {simulationSpeeds.map((s) => (
+              <option value={s.speed}>{s.speed}</option>
+            ))}
+          </select>
+        </div>
 
         <div className="m-2">
           <div>Total Energy : {totalEnergy}</div>
@@ -186,7 +214,6 @@ const BallsCtrl = ({
   const margin = 50;
   const scaleHeight = (window.innerHeight - 2 * margin) / environment.height;
 
-  const containerHeight = environment.height;
   return (
     <svg
       key="environment-border"

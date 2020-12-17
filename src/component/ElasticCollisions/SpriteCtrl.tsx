@@ -1,5 +1,5 @@
 import React from "react";
-import { Ball } from "../model/elasticBall";
+import { Ball } from "./elasticBall";
 
 export const SpriteCtrl = ({ ball }: { ball: Ball }) => {
   return (

@@ -1,4 +1,3 @@
-import { Vector } from "../../model/elasticBall";
 import {
   scaleVector,
   addVectors,
@@ -6,6 +5,7 @@ import {
   getMagnitude,
   subtractVectors,
 } from "../../vectors";
+import { Vector } from "../ElasticCollisions/elasticBall";
 
 export interface Planet {
   color: string;
@@ -22,11 +22,13 @@ export interface Scenario {
   size: number;
 }
 
-export type ScenarioType = "Scenario1" | "Scenario2";
+export type ScenarioType = "Scenario1" | "Scenario2" | "Scenario3";
 
 export const getScenario = (scenarioType: ScenarioType): Scenario => {
   if (scenarioType === "Scenario1") return getScenario1();
-  return getScenario2();
+  if (scenarioType === "Scenario2") return getScenario2();
+  if (scenarioType === "Scenario3") return getScenario3();
+  throw Error("Unknown scenario");
 };
 
 const getScenario1 = (): Scenario => {
@@ -95,6 +97,88 @@ const getScenario2 = (): Scenario => {
   };
 };
 
+const getScenario3 = (): Scenario => {
+  const centre: Vector = { x: 1000, y: 1000 };
+  return {
+    planets: [
+      {
+        color: "yellow",
+        size: 50,
+        mass: 1000000,
+        name: "Sun",
+        position: centre,
+        velocity: { x: 0, y: 0 },
+      },
+      {
+        color: "grey",
+        size: 5,
+        mass: 5,
+        name: "Mercury",
+        position: { x: centre.x, y: centre.y + 100 },
+        velocity: { x: 95, y: 0 },
+      },
+      {
+        color: "silver",
+        size: 15,
+        mass: 5,
+        name: "Venus",
+        position: { x: centre.x, y: centre.y + 150 },
+        velocity: { x: 85, y: 0 },
+      },
+      {
+        color: "blue",
+        size: 15,
+        mass: 5,
+        name: "Earth",
+        position: { x: centre.x, y: centre.y + 200 },
+        velocity: { x: 75, y: 0 },
+      },
+      {
+        color: "red",
+        size: 12,
+        mass: 5,
+        name: "Mars",
+        position: { x: centre.x, y: centre.y + 250 },
+        velocity: { x: 65, y: 0 },
+      },
+      {
+        color: "orange",
+        size: 40,
+        mass: 5,
+        name: "Jupiter",
+        position: { x: centre.x, y: centre.y + 350 },
+        velocity: { x: 55, y: 0 },
+      },
+      {
+        color: "OLIVE",
+        size: 35,
+        mass: 5,
+        name: "Saturn",
+        position: { x: centre.x, y: centre.y + 450 },
+        velocity: { x: 50, y: 0 },
+      },
+      {
+        color: "TEAL",
+        size: 25,
+        mass: 5,
+        name: "Neptune",
+        position: { x: centre.x, y: centre.y + 550 },
+        velocity: { x: 45, y: 0 },
+      },
+      {
+        color: "green",
+        size: 25,
+        mass: 5,
+        name: "Uranus",
+        position: { x: centre.x, y: centre.y + 650 },
+        velocity: { x: 40, y: 0 },
+      },
+    ],
+    name: "Scenario3",
+    size: 1700,
+  };
+};
+
 export const getGravityDeltaV = (
   planet: Planet,
   planets: Planet[],
@@ -108,7 +192,7 @@ export const getGravityDeltaV = (
     const diffVect = subtractVectors(planet1.position, planet.position);
 
     const distance = getMagnitude(diffVect);
-    if (distance == 0) continue;
+    if (distance === 0) continue;
     const unitVect = convertToUnitVector(diffVect);
     const forceOfGravity = (planet.mass * planet1.mass) / (distance * distance);
     const gravityDeltaV = scaleVector(

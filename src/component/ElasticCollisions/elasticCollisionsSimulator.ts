@@ -1,11 +1,51 @@
-import { Ball, Collision, Environment, Vector } from "./model/elasticBall";
 import {
   subtractVectors,
   getAngle,
   dotProduct,
   scaleVector,
   getMagnitude,
-} from "./vectors";
+} from "../../vectors";
+import { Ball, Environment, Collision, Vector } from "./elasticBall";
+
+export type SpeedType =
+  | "Very Slow"
+  | "Slow"
+  | "Normal"
+  | "Fast"
+  | "Very Fast"
+  | "Flat Out";
+
+export interface SpeedMapType {
+  speed: SpeedType;
+  timeInterval: number;
+}
+
+export const simulationSpeeds: SpeedMapType[] = [
+  {
+    speed: "Very Slow",
+    timeInterval: 0.01,
+  },
+  {
+    speed: "Slow",
+    timeInterval: 0.02,
+  },
+  {
+    speed: "Normal",
+    timeInterval: 0.03,
+  },
+  {
+    speed: "Fast",
+    timeInterval: 0.04,
+  },
+  {
+    speed: "Very Fast",
+    timeInterval: 0.05,
+  },
+  {
+    speed: "Flat Out",
+    timeInterval: 0.07,
+  },
+];
 
 export const doBoundaries = (ball: Ball, environment: Environment) => {
   if (ball.position.x - ball.size < 0 && ball.velocity.x < 0) {
