@@ -1,4 +1,5 @@
 The running code can be viewed at http://yallambee.net
+(Hosting is AWS S3 and Cloudfront)
 
 This projected started as a attempt to reproduce something I did as a kid on a C64. Many yaers ago I created used the C64 Raster interrupt hook to run some assembler code that would bounce some sprites around the screen. Because the code was run by a Raster interrupt it would always be running in the background and the sprites would always be onscreen bouncing around even when another program was running.
 
