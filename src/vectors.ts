@@ -1,4 +1,4 @@
-import { Vector } from "./component/ElasticCollisions/elasticBall";
+import { Vector } from "./component/ElasticCollisions/model";
 
 export const getAngle = (vector1: Vector, vector2: Vector) => {
   const lengthV1 = getMagnitude(vector1);

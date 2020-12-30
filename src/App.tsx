@@ -1,7 +1,7 @@
 import React from "react";
 import { HashRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { BouncingBalls } from "./component/ElasticCollisions/BouncingBalls";
+import { BouncingSprites } from "./component/ElasticCollisions/BouncingSprites";
 import { GasSimulation } from "./component/ElasticCollisions/GasSimulation";
 import { MazeMaker } from "./component/Maze/MazeMaker";
 import { PlanetOrbit } from "./component/PlanetSimulation/PlanetOrbit";
@@ -12,8 +12,8 @@ function App() {
     <HashRouter>
       <div className="App">
         <Switch>
-          <Route path={"/bouncingBalls"}>
-            <BouncingBalls />
+          <Route path={"/bouncingSprites"}>
+            <BouncingSprites />
           </Route>
           <Route path="/gasSimulation">
             <GasSimulation />
@@ -28,22 +28,28 @@ function App() {
             <MazeMaker />
           </Route>
           <Route path="/">
-            <div className="text-2xl">Links</div>
+            <div className="text-2xl mt-16">Links</div>
             <nav>
-              <Link to="/bouncingBalls">
-                <p>Bouncing Balls</p>
+              <Link to="/bouncingSprites">
+                <div>
+                  <a href="#" className="hover:underline">
+                    Bouncing Sprites
+                  </a>
+                </div>
               </Link>
               <Link to="/gasSimulation">
-                <p>Gas Simulation</p>
+                <div>
+                  <a href="#" className="hover:underline">
+                    Ideal Gas Simulation
+                  </a>
+                </div>
               </Link>
               <Link to="/planetOrbit">
-                <p>Planet Orbit</p>
-              </Link>
-              <Link to="/ropeSimulation">
-                <p>Rope Simulation</p>
-              </Link>
-              <Link to="/maze">
-                <p>Maze Maker</p>
+                <div>
+                  <a href="#" className="hover:underline">
+                    Planet Orbit
+                  </a>
+                </div>
               </Link>
             </nav>
           </Route>

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { createRandonVector, scaleVector } from "../../vectors";
-import { Ball, Environment } from "./elasticBall";
+import { Environment, Sprite } from "./model";
 import {
   performCollisions,
   getTotalEnergy,
@@ -17,61 +17,67 @@ const environment = {
   width: 800,
 };
 
-const createBalls = (environment: Environment, size: number) => {
+const createSprites = (environment: Environment, size: number) => {
   const gap = 20;
   const spacing = 2 * size + gap;
   const rowCount = (environment.height - spacing) / spacing;
   const colCount = (environment.width - spacing) / spacing;
 
-  const balls: Ball[] = [];
+  const sprites: Sprite[] = [];
   for (let row = 0; row < rowCount; row++) {
     for (let col = 0; col < colCount; col++) {
-      balls.push({
+      sprites.push({
         color: "white",
         size,
         mass: 0.2,
-        name: `ball ${row} ${col}`,
+        name: `sprite ${row} ${col}`,
         position: {
           x: col * spacing + gap + size,
           y: row * spacing + gap + size,
         },
         velocity: createRandonVector(25),
+        rotation: 0,
+        rotationSpeed: 10,
+        type: "Ball",
       });
     }
   }
-  return balls;
+  return sprites;
 };
 
 // simulate heating/cooling from below
-const doHeatingCooling = (ball: Ball, heatType: HeatType) => {
+const doHeatingCooling = (sprite: Sprite, heatType: HeatType) => {
   if (heatType === "Heat") {
-    ball.velocity = scaleVector(ball.velocity, 1.3);
+    sprite.velocity = scaleVector(sprite.velocity, 1.3);
   } else if (heatType === "Cool") {
-    ball.velocity = scaleVector(ball.velocity, 0.8);
+    sprite.velocity = scaleVector(sprite.velocity, 0.8);
   }
 };
 
 const doContainerBoundaries = (
-  ball: Ball,
+  sprite: Sprite,
   environment: Environment,
   heatType: HeatType
 ) => {
   // lower boundary
-  if (ball.position.x - ball.size < 0 && ball.velocity.x < 0) {
-    ball.velocity.x = -1 * ball.velocity.x;
-    doHeatingCooling(ball, heatType);
+  if (sprite.position.x - sprite.size < 0 && sprite.velocity.x < 0) {
+    sprite.velocity.x = -1 * sprite.velocity.x;
+    doHeatingCooling(sprite, heatType);
   }
 
-  if (ball.position.x + ball.size > environment.width && ball.velocity.x > 0) {
-    ball.velocity.x = -1 * ball.velocity.x;
+  if (
+    sprite.position.x + sprite.size > environment.width &&
+    sprite.velocity.x > 0
+  ) {
+    sprite.velocity.x = -1 * sprite.velocity.x;
   }
 
-  if (ball.position.y + ball.size > environment.height) {
-    ball.velocity.y = -1 * Math.abs(ball.velocity.y);
+  if (sprite.position.y + sprite.size > environment.height) {
+    sprite.velocity.y = -1 * Math.abs(sprite.velocity.y);
   }
 
-  if (ball.position.y - ball.size < 0) {
-    ball.velocity.y = Math.abs(ball.velocity.y);
+  if (sprite.position.y - sprite.size < 0) {
+    sprite.velocity.y = Math.abs(sprite.velocity.y);
   }
 };
 
@@ -80,7 +86,7 @@ const defaultSpeed = "Normal";
 let timeInterval: number =
   simulationSpeeds.find((s) => s.speed === defaultSpeed)?.timeInterval || 0;
 
-let balls = createBalls(environment, defaulktSize);
+let sprites = createSprites(environment, defaulktSize);
 
 type HeatType = "Heat" | "Cool" | "None";
 
@@ -94,10 +100,10 @@ export const GasSimulation = () => {
   );
 
   const doSimulationTimeStepCB = useCallback(() => {
-    performCollisions(balls);
-    balls.forEach((ball) => {
-      doContainerBoundaries(ball, environment, heatType);
-      updatePosition(ball, environment, timeInterval);
+    performCollisions(sprites);
+    sprites.forEach((sprite) => {
+      doContainerBoundaries(sprite, environment, heatType);
+      updatePosition(sprite, environment, timeInterval);
     });
   }, [heatType]);
 
@@ -118,7 +124,7 @@ export const GasSimulation = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (running) {
-        const energy = getTotalEnergy(balls, environment);
+        const energy = getTotalEnergy(sprites, environment);
         setTotalEnergy(Math.ceil(energy));
       }
     }, 1000);
@@ -131,7 +137,7 @@ export const GasSimulation = () => {
   };
 
   const resetSimulation = () => {
-    balls = createBalls(environment, 10);
+    sprites = createSprites(environment, 10);
     setCounter((count) => count + 1);
   };
 
@@ -194,21 +200,21 @@ export const GasSimulation = () => {
         </div>
       </div>
       <div className="m-1">
-        <BallsCtrl balls={balls} heatType={heatType}></BallsCtrl>
+        <SpritesCtrl sprites={sprites} heatType={heatType}></SpritesCtrl>
       </div>
       <div className="m-1">
         <div>Energy Histogram</div>
-        <Histogram balls={balls} environment={environment}></Histogram>
+        <Histogram sprites={sprites} environment={environment}></Histogram>
       </div>
     </div>
   );
 };
 
-const BallsCtrl = ({
-  balls,
+const SpritesCtrl = ({
+  sprites,
   heatType,
 }: {
-  balls: Ball[];
+  sprites: Sprite[];
   heatType: HeatType;
 }) => {
   const margin = 50;
@@ -253,30 +259,30 @@ const BallsCtrl = ({
           ></rect>
         )}
 
-        {balls.map((ball, index) => {
-          return <BallCtrl ball={ball} index={index} />;
+        {sprites.map((sprite, index) => {
+          return <SpriteCtrl sprite={sprite} index={index} />;
         })}
       </g>
     </svg>
   );
 };
 
-const BallCtrl = ({ ball, index }: { ball: Ball; index: number }) => {
+const SpriteCtrl = ({ sprite, index }: { sprite: Sprite; index: number }) => {
   return (
     <svg
-      key={`ball-container${ball.name}`}
-      width={ball.size * 2}
-      height={ball.size * 2}
-      x={ball.position.x - ball.size}
-      y={environment.height - ball.position.y - ball.size}
+      key={`sprite-container${sprite.name}`}
+      width={sprite.size * 2}
+      height={sprite.size * 2}
+      x={sprite.position.x - sprite.size}
+      y={environment.height - sprite.position.y - sprite.size}
     >
       <circle
-        key={`ball${index}`}
-        cx={ball.size}
-        cy={ball.size}
-        r={ball.size - 1}
+        key={`sprite${index}`}
+        cx={sprite.size}
+        cy={sprite.size}
+        r={sprite.size - 1}
         style={{
-          fill: ball.color,
+          fill: sprite.color,
           stroke: "black",
           strokeWidth: 1,
           opacity: 1,

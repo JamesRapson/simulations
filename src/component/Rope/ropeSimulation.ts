@@ -6,7 +6,7 @@ import {
   scaleVector,
   subtractVectors,
 } from "../../vectors";
-import { Vector } from "../ElasticCollisions/elasticBall";
+import { Vector } from "../ElasticCollisions/model";
 
 const neutralSeparation = 10;
 

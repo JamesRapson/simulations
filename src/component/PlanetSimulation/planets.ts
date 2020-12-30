@@ -5,7 +5,7 @@ import {
   getMagnitude,
   subtractVectors,
 } from "../../vectors";
-import { Vector } from "../ElasticCollisions/elasticBall";
+import { Vector } from "../ElasticCollisions/model";
 
 export interface Planet {
   color: string;

@@ -1,16 +1,16 @@
 import React, { useRef } from "react";
 
 import d3, { max, select, scaleLinear, histogram, axisBottom } from "d3";
-import { Ball, Environment } from "./elasticBall";
 import { getEnergy } from "./elasticCollisionsSimulator";
+import { Sprite, Environment } from "./model";
 
 let lastUpdate: number;
 
 export const Histogram = ({
-  balls,
+  sprites,
   environment,
 }: {
-  balls: Ball[];
+  sprites: Sprite[];
   environment: Environment;
 }) => {
   const ref = useRef(null);
@@ -26,7 +26,7 @@ export const Histogram = ({
   if (diff > 1000 || !lastUpdate) {
     lastUpdate = Date.now();
 
-    const data = getEnergy(balls, environment);
+    const data = getEnergy(sprites, environment);
 
     //const maxVal = (max(data) || 100) + 50;
     const maxVal = 20000;
