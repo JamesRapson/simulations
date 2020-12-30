@@ -148,7 +148,7 @@ export const SpriteSimulatorCtrl = ({
           </select>
         </div>
       </div>
-      <div className="m-4">
+      <div className="m-4 w-full">
         <svg
           key="environment-border"
           width="100%"
