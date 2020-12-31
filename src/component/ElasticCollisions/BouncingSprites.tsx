@@ -40,7 +40,7 @@ const generateSprites = (
       size: size,
       mass: 10,
       rotation: 0,
-      rotationSpeed: Math.ceil(Math.random() * 40) - 40,
+      rotationSpeed: Math.ceil(Math.random() * 80) - 40,
     });
   }
   return sprites;

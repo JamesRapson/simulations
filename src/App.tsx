@@ -31,25 +31,13 @@ function App() {
             <div className="text-2xl mt-16">Links</div>
             <nav>
               <Link to="/bouncingSprites">
-                <div>
-                  <a href="#" className="hover:underline">
-                    Bouncing Sprites
-                  </a>
-                </div>
+                <div className="hover:underline">Bouncing Sprites</div>
               </Link>
               <Link to="/gasSimulation">
-                <div>
-                  <a href="#" className="hover:underline">
-                    Ideal Gas Simulation
-                  </a>
-                </div>
+                <div className="hover:underline">Ideal Gas Simulation</div>
               </Link>
               <Link to="/planetOrbit">
-                <div>
-                  <a href="#" className="hover:underline">
-                    Planet Orbit
-                  </a>
-                </div>
+                <div className="hover:underline">Planet Orbit</div>
               </Link>
             </nav>
           </Route>

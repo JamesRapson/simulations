@@ -1,19 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  doBoundaries,
+  performCollisions,
+  simulationSpeeds,
+  SpeedType,
+  updatePosition,
+  updateRotation,
+} from "./elasticCollisionsSimulator";
+import {
   getSpriteRenderCtrl,
   Sprite,
   SpriteSimulatorCtrlProps,
   SpriteType,
 } from "./model";
-import {
-  performCollisions,
-  doBoundaries,
-  updatePosition,
-  SpeedType,
-  simulationSpeeds,
-  updateRotation,
-} from "./elasticCollisionsSimulator";
-import { ManSpriteRenderCtrl, BallSpriteRenderCtrl } from "./SpriteCtrl";
 
 const environment = {
   gravity: 10,
@@ -21,7 +20,7 @@ const environment = {
   width: 1000,
 };
 
-const defaultspriteCount = 5;
+const defaultspriteCount = 10;
 const defaultSpeed = "Fast";
 let timeInterval: number =
   simulationSpeeds.find((s) => s.speed === defaultSpeed)?.timeInterval || 0;
@@ -31,7 +30,7 @@ let sprites: Sprite[] = [];
 export const SpriteSimulatorCtrl = ({
   spriteGenerator,
 }: SpriteSimulatorCtrlProps) => {
-  const [count, setCounter] = useState<number>(0);
+  const [, setCounter] = useState<number>(0);
   const [spriteCount, setSpriteCount] = useState<number>(defaultspriteCount);
   const [running, setRunning] = useState(true);
   const [spriteType, setSpriteType] = useState<SpriteType>("Man");
@@ -60,7 +59,7 @@ export const SpriteSimulatorCtrl = ({
 
   useEffect(() => {
     sprites = spriteGenerator(spriteType, spriteCount, environment);
-  }, [spriteCount]);
+  }, [spriteCount, spriteType, spriteGenerator]);
 
   const onCountOfBallsChanged = (countStr: string) => {
     const count = Number.parseInt(countStr);
