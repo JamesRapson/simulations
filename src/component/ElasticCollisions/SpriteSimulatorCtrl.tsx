@@ -90,7 +90,7 @@ export const SpriteSimulatorCtrl = ({
   };
 
   return (
-    <div className="flex">
+    <div className="flex-container  p-4">
       <div className="m-8 w-48">
         <div className="m-2">
           <button
@@ -147,17 +147,16 @@ export const SpriteSimulatorCtrl = ({
           </select>
         </div>
       </div>
-      <div className="m-4 w-full">
+      <div className="w-full">
         <svg
           key="environment-border"
           width="100%"
-          height={window.innerHeight - 100}
           viewBox={`0 0 ${environment.width} ${environment.height}`}
         >
           <rect
             key="environment"
-            width={environment.width}
-            height={environment.height}
+            width="100%"
+            height="100%"
             style={{
               fill: "silver",
               stroke: "black",
