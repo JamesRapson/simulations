@@ -16,7 +16,7 @@ import {
 
 const environment = {
   gravity: 10,
-  height: 800,
+  height: 1000,
   width: 1000,
 };
 
@@ -89,8 +89,20 @@ export const SpriteSimulatorCtrl = ({
     setCounter((count) => count + 1);
   };
 
+  let areaHeight = 0,
+    areaWidth = 0;
+  if (window.innerWidth > 800) {
+    // Horizontal layout
+    areaHeight = window.innerHeight - 50;
+    areaWidth = window.innerWidth - 300;
+  } else {
+    // vartical layout
+    areaWidth = window.innerWidth - 50;
+    areaHeight = areaWidth;
+  }
+
   return (
-    <div className="flex-container  p-4">
+    <div className="flex-container p-4">
       <div className="m-8 w-48">
         <div className="m-2">
           <button
@@ -150,7 +162,8 @@ export const SpriteSimulatorCtrl = ({
       <div className="w-full">
         <svg
           key="environment-border"
-          width="100%"
+          width={areaWidth}
+          height={areaHeight}
           viewBox={`0 0 ${environment.width} ${environment.height}`}
         >
           <rect

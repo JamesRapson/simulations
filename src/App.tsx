@@ -28,18 +28,23 @@ function App() {
             <MazeMaker />
           </Route>
           <Route path="/">
-            <div className="text-2xl mt-16">Links</div>
-            <nav>
-              <Link to="/bouncingSprites">
-                <div className="hover:underline">Bouncing Sprites</div>
-              </Link>
-              <Link to="/gasSimulation">
-                <div className="hover:underline">Ideal Gas Simulation</div>
-              </Link>
-              <Link to="/planetOrbit">
-                <div className="hover:underline">Planet Orbit</div>
-              </Link>
-            </nav>
+            <div className="m-auto w-64 text-center">
+              <div className="text-2xl mt-16">Links</div>
+              <nav>
+                <Link to="/bouncingSprites">
+                  <div className="hover:underline">Bouncing Sprites</div>
+                </Link>
+                <Link to="/gasSimulation">
+                  <div className="hover:underline">Ideal Gas Simulation</div>
+                </Link>
+                <Link to="/planetOrbit">
+                  <div className="hover:underline">Planet Orbit</div>
+                </Link>
+                <div>
+                  <a href="http://d202ch878hey71.cloudfront.net/">Chess Game</a>
+                </div>
+              </nav>
+            </div>
           </Route>
         </Switch>
       </div>
